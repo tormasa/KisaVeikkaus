@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Kisaveikkaus</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
+
+            body {
+                background-color: rgb(109, 180, 109)
+            }
+            h1 {
+                text-align: center;
+                font-family: 'Itim', cursive;
+            }
+            .nimi {
+                text-align: center;
+            }
+            .arvaus {
+                text-align: center;
+            }
+            .send {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>KISAVEIKKAUS</h1>
+
+        <div id="mainBlock">
+            <div class="nimi">
+                <p>Nimi:</p>
+                <input type="text" id="veikkaajanNimi" value="">
+            </div>
+
+            <div class="arvaus">
+                <br>
+                <button type="button" id="alkulohkoButton">Alkulohkot</button>
+            </div>
+
+            <div class="send">
+                <br>
+                <br>
+                <button type="button" id="sendButton">Lähetä</button>
+            </div>
+        </div>
+
+        <div id="alkulohkoBlock">
+            <button type="button" id="backToMainButton">OK</button>
+        </div>
+        
+
+    <script src="./index.js"></script>
+    </body>
+</html>
