@@ -1,6 +1,9 @@
-let requestURL = '';
+// Team json
+let requestURL = 'https://api.jsonbin.io/b/6097bb94a23274124b00f424';
 let request = new XMLHttpRequest();
 request.open('GET', requestURL);
+request.responseType = 'json';
+request.send();
 
 document.getElementById("alkulohkoButton").addEventListener("click", openAlkulohko);
 document.getElementById("backButtonAlkulohko").addEventListener("click", openMain);
