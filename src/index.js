@@ -1,5 +1,5 @@
 // Team json
-let requestURL = 'https://api.jsonbin.io/b/6097bb94a23274124b00f424';
+let requestURL = 'https://api.jsonbin.io/b/60a18b13d576d41d833eb495';
 let request = new XMLHttpRequest();
 request.open('GET', requestURL);
 request.responseType = 'json';
@@ -51,7 +51,7 @@ function openMainFromGroup() {
         document.getElementById("groupError").innerText = "LIIAN PALJON VALITTUJA JOUKKUEITA!";
     }
     else {
-        const teams = teamData['teams'];
+        var teams = teamData['teams'];
         var valid = true;
 
         // Käydään lohkot läpi
@@ -83,7 +83,28 @@ function openMainFromGroup() {
 }
 
 function send() {
-    console.log(document.getElementById("veikkaajanNimi").value);
+    document.getElementById("sendLog").innerText = "";
+
+    var sendable = checkNameValid() && checkGroupIDValid() && checkGroupQualValid();
+
+    if (sendable) {
+        var item = {};
+        item["name"] = document.getElementById("veikkaajanNimi").value;
+        item["group"] = document.getElementById("ryhmaTunnus").value;
+
+        var grQual = [];
+        var teams = teamData['teams'];
+
+        for (var i = 0; i < qualGroupTeams.length; i++) {
+            var groupItem = {};
+            groupItem["groupQualTeam"] = teams[qualGroupTeams[i]].teamID;
+            grQual.push(groupItem);
+        }
+
+        item["groupQualifiers"] = grQual;
+
+        console.log(JSON.stringify(item));
+    }
 }
 
 function createLohko(kirjain, obj, pair) {
@@ -123,4 +144,38 @@ function createLohko(kirjain, obj, pair) {
     
     var parent = (pair) ? document.getElementById("groupPairCol") : document.getElementById("groupPairlessCol");
     parent.appendChild(div);
+}
+
+function checkNameValid() {
+    var name = document.getElementById("veikkaajanNimi").value;
+
+    if (name.length < 1) {
+        document.getElementById("sendLog").innerText = "Nimi puuttuu!";
+
+        return false;
+    }
+
+    return true;
+}
+
+function checkGroupIDValid() {
+    var group = document.getElementById("ryhmaTunnus").value;
+
+    if (group.length < 1) {
+        document.getElementById("sendLog").innerText = "Tunnus puuttuu!";
+
+        return false;
+    }
+
+    return true;
+}
+
+function checkGroupQualValid() {
+    if (qualGroupTeams.length != 16) {
+        document.getElementById("sendLog").innerText = "Veikkaa lohkoista jatkoonpääsevät joukkueet!";
+
+        return false;
+    }
+
+    return true;
 }

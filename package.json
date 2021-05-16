@@ -2,17 +2,17 @@
   "name": "kisaveikkaus",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel index.html",
-    "build": "parcel build --public-url . index.html"
+    "start": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "cssnano": "^5.0.2",
-    "parcel-bundler": "^1.12.5",
+    "parcel": "^2.0.0-beta.2",
     "postcss": "^8.2.14"
   }
 }
