@@ -12,8 +12,10 @@ request.onload = function() {
     teamData = request.response;
     // Alkulohkojen luonti kun on ladattu json
     for (var i = 0; i < 6; i++) {
-        createLohko((i+10).toString(36).toUpperCase(), teamData, i % 2 != 0);
+        //createLohko((i+10).toString(36).toUpperCase(), teamData, i % 2 != 0);
     }
+
+    createLohkot();
 
     // Lisätään toiminnallisuudet painikkeisiin vasta kun on saatu vastaus json-viestiin
     document.getElementById("alkulohkoButton").addEventListener("click", openAlkulohko);
@@ -38,7 +40,7 @@ function openMainFromGroup() {
 
     for (var i = 0; i < formElements.length; i++) {
         if (formElements[i].checked) {
-            qualGroupTeams.push(i);
+            qualGroupTeams.push(formElements[i].name);
         }
     }
 
@@ -59,10 +61,15 @@ function openMainFromGroup() {
             var groupCount = 0;
             //console.log("group " + (i+10).toString(36).toUpperCase());
 
-            for (var j = 0; j < qualGroupTeams.length; j++) {    
+            for (var j = 0; j < formElements.length; j++) {    
                 //console.log("value: " +formElements[j].value);
-                if (teams[qualGroupTeams[j]].lohko == (i+10).toString(36).toUpperCase()) {
-                    groupCount++;
+                if (formElements[j].checked) {
+                    for (var k = 0; k < teams.length; k++) {
+                        if (teams[k].teamID == formElements[j].value) {
+                            if (teams[k].lohko == (i+10).toString(36).toUpperCase()) groupCount++;
+                            break;
+                        }
+                    }
                 }
             }
             
@@ -97,13 +104,68 @@ function send() {
 
         for (var i = 0; i < qualGroupTeams.length; i++) {
             var groupItem = {};
-            groupItem["groupQualTeam"] = teams[qualGroupTeams[i]].teamID;
+            groupItem["groupQualTeam"] = qualGroupTeams[i];
             grQual.push(groupItem);
         }
 
         item["groupQualifiers"] = grQual;
 
         console.log(JSON.stringify(item));
+    }
+}
+
+function createLohkot() {
+    const teams = teamData['teams'];
+    const blockDiv = document.getElementById("alkulohkoTeams");
+    var lohkoDivs = [];
+
+    for (var i = 0; i < 6; i++) {
+        var lohkoHeaderDiv = document.createElement("div");
+        lohkoHeaderDiv.innerHTML = "LOHKO " +(i+10).toString(36).toUpperCase();
+        lohkoHeaderDiv.className = "alkulohko-header";
+
+        blockDiv.appendChild(lohkoHeaderDiv);
+        lohkoDivs.push(lohkoHeaderDiv);
+    }
+
+    for (var i = 0; i < teams.length; i++) {
+        var teamDiv = document.createElement("div");
+        var label = document.createElement("label");
+        var checkBox = document.createElement("INPUT");
+        var span = document.createElement("span");
+
+        span.innerHTML = teams[i].name;
+
+        checkBox.setAttribute("type", "checkbox");
+        checkBox.setAttribute("name", teams[i].name);
+        checkBox.value = teams[i].teamID;
+
+        teamDiv.id = "ck-button";
+
+        label.appendChild(checkBox);
+        label.appendChild(span);
+        teamDiv.appendChild(label);
+
+        var lohkoInt = beforeLohko(teams[i].lohko);
+        if (lohkoInt < 0) blockDiv.appendChild(teamDiv);
+        else blockDiv.insertBefore(teamDiv, lohkoDivs[lohkoInt]);
+    }
+}
+
+function beforeLohko(kirjain) {
+    switch(kirjain) {
+        case "A":
+            return 1;
+        case "B":
+            return 2;
+        case "C":
+            return 3;
+        case "D":
+            return 4;
+        case "E":
+            return 5;
+        default:
+            return -1;
     }
 }
 
@@ -122,23 +184,27 @@ function createLohko(kirjain, obj, pair) {
     //var t1Button = document
     for (var i = 0; i < teams.length; i++) {
         if (teams[i].lohko == kirjain) {
-            var container = document.createElement("label");
+            var newDiv = document.createElement("div");
+            var label = document.createElement("label");
             var checkBox = document.createElement("INPUT");
-            var checkMark = document.createElement("span");
+            var span = document.createElement("span");
 
-            container.innerHTML = teams[i].name;
+            span.innerHTML = teams[i].name;
 
             //button.innerHTML = teams[i].name;
             checkBox.setAttribute("type", "checkbox");
+            checkBox.setAttribute("name", teams[i].name);
 
-            container.className = "container";
-            checkMark.className = "checkmark";
+            //container.className = "container";
+            //checkMark.className = "checkmark";
+            newDiv.id = "ck-button";
             
-            container.appendChild(checkBox);
-            container.appendChild(checkMark);
-            div.appendChild(container);
+            label.appendChild(checkBox);
+            label.appendChild(span);
+            newDiv.appendChild(label);
+            div.appendChild(newDiv);
 
-            checkBox.value = i;
+            checkBox.value = teams[i].teamID;
         }
     }
     
@@ -172,7 +238,7 @@ function checkGroupIDValid() {
 
 function checkGroupQualValid() {
     if (qualGroupTeams.length != 16) {
-        document.getElementById("sendLog").innerText = "Veikkaa lohkoista jatkoonpääsevät joukkueet!";
+        document.getElementById("sendLog").innerText = "Alkulohkoveikkaukset puuttuu!";
 
         return false;
     }

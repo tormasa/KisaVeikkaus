@@ -5,25 +5,105 @@
         <title>Kisaveikkaus</title>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&display=swap');
 
             body {
-                background-color: rgb(109, 180, 109)
+                background-color: #008EAA
             }
             h1 {
                 text-align: center;
                 font-family: 'Itim', cursive;
+                font-size: 64px;
+                color: #F2A900;
+                text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;;
             }
-            .nimi {
+            .grid-container {
+                display: grid;
+                grid-template-columns: auto auto auto auto;
+            }
+            .grid-item-text {
+                text-align: right;
+                vertical-align: middle;
+                padding-right: 10px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                grid-column: 2;
+                font-family: 'Comfortaa', cursive;
+                font-size: 20px;
+            }
+            .grid-item-input {
+                font-size: 20px;
+                text-align: left;
+                vertical-align: middle;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                grid-column: 3;
+            }
+            .grid-item-button {
+                text-align: center;
+                grid-column-start: 2;
+                grid-column-end: 4;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            .grid-item-send-button {
+                text-align: center;
+                grid-column-start: 2;
+                grid-column-end: 4;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            .arvausButton {
+                background-color: #E57200;
+                border: 2px solid black;
+                color: black;
+                padding: 15px 32px;
+                border-radius: 12px;
+                transition-duration: 0.4s;
+                width: 50%;
+                font-family: 'Comfortaa', cursive;
+                font-size: 20px;
+            }
+            .arvausButton:hover {
+                background-color: #fd9e3f;
+            }
+            .send-button {
+                background-color: #78BE21;
+                border: 2px solid black;
+                color: black;
+                padding: 15px 32px;
+                border-radius: 12px;
+                transition-duration: 0.4s;
+                width: 35%;
+                font-family: 'Comfortaa', cursive;
+                font-size: 20px;
                 text-align: center;
             }
-            .tunnus{
-                text-align: center;
+            .send-button:hover {
+                background-color: #9ef139;
             }
-            .arvaus {
+            .send-log-text {
                 text-align: center;
+                vertical-align: middle;
+                padding-right: 10px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                font-family: 'Comfortaa', cursive;
+                font-size: 20px;
+                color: rgb(131, 15, 15)
             }
-            .send {
+            .alkulohko-teams {
+                column-count: 2;
+                padding-left: 10%;
+                padding-right: 10%;
+            }
+            .alkulohko-header {
                 text-align: center;
+                font-family: 'Comfortaa', cursive;
+                font-size: 26px;
+                padding-top: 20px;
+                padding-bottom: 20px;
+                font-weight: 300;
             }
             .alkulohkoRow {
                 margin: 0 auto;
@@ -44,6 +124,29 @@
             .alkulohkoSideCol {
                 float: left;
                 width: 25%;
+            }
+            #ck-button {
+                margin:4px;
+                background-color:#E57200;
+                border-radius:4px;
+                border:2px solid #D0D0D0;
+                overflow:auto;
+            }
+            #ck-button label span {
+                text-align:center;
+                display:block;
+                font-family: 'Comfortaa', cursive;
+                font-size: 20px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            #ck-button label input {
+                position:absolute;
+                top: -20px;
+            }
+            #ck-button input:checked + span {
+                background-color:#78BE21;
+                color:#fff;
             }
             .container {
                 display: block;
@@ -104,43 +207,47 @@
         <h1>KISAVEIKKAUS</h1>
 
         <div id="mainBlock">
-            <div class="nimi">
-                <p>Nimi:</p>
-                <input type="text" id="veikkaajanNimi" value="">
+            <div class="grid-container">
+                <div class="grid-item-text">Nimi: </div>
+                <div class="grid-item-input"><input type="text" id="veikkaajanNimi" value=""></div>
+
+                <div class="grid-item-text">Tunnus: </div>
+                <div class="grid-item-input"><input type="text" id="ryhmaTunnus" value=""></div>
+
+                <div class="grid-item-button"><button class="arvausButton" type="button" id="alkulohkoButton">Alkulohkot</button></div>
+
+                <div class="grid-item-button"><button class="arvausButton" type="button" id="puolivalieratButton">Puolivälierät</button></div>
+
+                <div class="grid-item-button"><button class="arvausButton" type="button" id="valieratButton">Välierät</button></div>
+
+                <div class="grid-item-button"><button class="arvausButton" type="button" id="finaaliButton">Finaali</button></div>
+
+                <div class="grid-item-button"><button class="arvausButton" type="button" id="mestariButton">Mestari</button></div>
+
+                <div class="grid-item-button"><button class="arvausButton" type="button" id="maalintekijatButton">Maalintekijät</button></div>
+
+                <div class="grid-item-text"></div>
+
+                <div class="grid-item-send-button"><button class="send-button" type="button" id="sendButton">LÄHETÄ</button></div>
             </div>
 
-            <div class="tunnus">
-                <p>Tunnus:</p>
-                <input type="text" id="ryhmaTunnus" value="">
-            </div>
-
-            <div class="arvaus">
-                <br>
-                <button type="button" id="alkulohkoButton">Alkulohkot</button>
-            </div>
-
-            <div class="send">
-                <br>
-                <br>
-                <p id="sendLog"></p>
-                <button type="button" id="sendButton">Lähetä</button>
-            </div>
+            <div class="send-log-text" id="sendLog"></div>
         </div>
 
         <div id="alkulohkoBlock">
-            <div class="alkulohkoRow" id="groupCols">
-                <form id="groupForm">
-                    <div class="alkulohkoCol" id="groupPairlessCol"></div>
-                    <div class="alkulohkoCol" id="groupPairCol"></div>
-                </form>
-                
-            </div>
+            <form id="groupForm">
+                <div class="alkulohko-teams" id="alkulohkoTeams">
+
+                </div>
+            </form>
+
+            <br>
             <div class="alkulohkoRow">
-                <p id="groupError"> </p>
+                <button class="send-button" type="button" id="backButtonAlkulohko">VAHVISTA</button>
             </div>
-            <div class="alkulohkoRow">
-                <button type="button" id="backButtonAlkulohko">OK</button>
-            </div>
+
+            <br>
+            <div class="send-log-text" id="groupError"></div>
         </div>
         
     <script src="index.js"></script>
