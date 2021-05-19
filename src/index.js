@@ -42,6 +42,10 @@ function showOneBlock(block) {
     document.getElementById("mestariBlock").style.display = "none";
 
     document.getElementById(block).style.display = "block";
+
+    if (block == "mainBlock") {
+        document.getElementById("sendLog").innerText = "";
+    }
 }
 
 function openAlkulohko() {
@@ -98,9 +102,21 @@ function openMainFromGroup() {
 
         if (valid) {
             showOneBlock("mainBlock");
+            confirmCheck(true, "alkulohko");
         }
     }
     
+}
+
+function confirmCheck(value, prefix) {
+    var element = document.getElementById(prefix +"CheckConfirm");
+
+    if (value) {
+        element.style = "display:inline-block";
+    }
+    else {
+        element.style = "display:none";
+    }
 }
 
 function openPuolivaliera() {
@@ -120,19 +136,27 @@ function openMestari() {
 }
 
 function openMainFromPuolivaliera() {
-    openMainFromTeamSelection("puolivalierat", 8);
+    var prefix = "puolivalierat";
+    openMainFromTeamSelection(prefix, 8);
+    confirmCheck(true, prefix);
 }
 
 function openMainFromValiera() {
-    openMainFromTeamSelection("valierat", 4);
+    var prefix = "valierat";
+    openMainFromTeamSelection(prefix, 4);
+    confirmCheck(true, prefix);
 }
 
 function openMainFromFinaali() {
-    openMainFromTeamSelection("finaali", 2);
+    var prefix = "finaali";
+    openMainFromTeamSelection(prefix, 2);
+    confirmCheck(true, prefix);
 }
 
 function openMainFromMestari() {
-    openMainFromTeamSelection("mestari", 1);
+    var prefix = "mestari";
+    openMainFromTeamSelection(prefix, 1);
+    confirmCheck(true, prefix);
 }
 
 function openMainFromTeamSelection(stage, choiceCount) {
@@ -156,7 +180,8 @@ function openMainFromTeamSelection(stage, choiceCount) {
 function send() {
     document.getElementById("sendLog").innerText = "";
 
-    var sendable = checkNameValid() && checkGroupIDValid() && checkGroupQualValid();
+    var sendable = checkNameValid() && checkGroupIDValid() && checkGroupQualValid() && 
+    checkQuarterFinalValid() && checkSemiFinalValid() && checkFinalValid() && checkChampionValid();
 
     if (sendable) {
         var item = {};
@@ -173,6 +198,63 @@ function send() {
         }
 
         item["groupQualifiers"] = grQual;
+
+        // NELJÄNNESFINAALI
+        var quarterFinal = [];
+        var formElements = document.getElementById("puolivalieratForm").elements;
+
+        for (var i = 0; i < formElements.length; i++) {
+            if (formElements[i].checked) {
+                var teamItem = {};
+                teamItem["quarterTeam"] = formElements[i].name;
+                quarterFinal.push(teamItem);
+            }
+        }
+
+        item["quarterFinal"] = quarterFinal;
+
+        // SEMIFINAALI
+        var semiFinal = [];
+        var formElements = document.getElementById("valieratForm").elements;
+
+        for (var i = 0; i < formElements.length; i++) {
+            if (formElements[i].checked) {
+                var teamItem = {};
+                teamItem["semiFinalTeam"] = formElements[i].name;
+                semiFinal.push(teamItem);
+            }
+        }
+
+        item["semiFinal"] = semiFinal;
+
+        // FINAALI
+        var final = [];
+        var formElements = document.getElementById("finaaliForm").elements;
+
+        for (var i = 0; i < formElements.length; i++) {
+            if (formElements[i].checked) {
+                var teamItem = {};
+                teamItem["finalTeam"] = formElements[i].name;
+                final.push(teamItem);
+            }
+        }
+
+        item["final"] = final;
+
+        // MESTARI
+        var champion = [];
+        var formElements = document.getElementById("mestariForm").elements;
+
+        for (var i = 0; i < formElements.length; i++) {
+            if (formElements[i].checked) {
+                var teamItem = {};
+                teamItem["champion"] = formElements[i].name;
+                champion.push(teamItem);
+            }
+        }
+
+        item["champion"] = champion;
+
 
         console.log(JSON.stringify(item));
     }
@@ -313,5 +395,77 @@ function checkGroupQualValid() {
         return false;
     }
 
+    return true;
+}
+
+function checkQuarterFinalValid() {
+    var formElements = document.getElementById("puolivalieratForm").elements;
+    var count = 0;
+
+    for (var i = 0; i < formElements.length; i++) {
+        if (formElements[i].checked) {
+            count++;
+        }
+    }
+
+    if (count != 8) {
+        document.getElementById("sendLog").innerText = "Valitse 8 puolivälieräjoukkuetta!";
+        return false;
+    }
+    
+    return true;
+}
+
+function checkSemiFinalValid() {
+    var formElements = document.getElementById("valieratForm").elements;
+    var count = 0;
+
+    for (var i = 0; i < formElements.length; i++) {
+        if (formElements[i].checked) {
+            count++;
+        }
+    }
+
+    if (count != 4) {
+        document.getElementById("sendLog").innerText = "Valitse 4 välieräjoukkuetta!";
+        return false;
+    }
+    
+    return true;
+}
+
+function checkFinalValid() {
+    var formElements = document.getElementById("finaaliForm").elements;
+    var count = 0;
+
+    for (var i = 0; i < formElements.length; i++) {
+        if (formElements[i].checked) {
+            count++;
+        }
+    }
+
+    if (count != 2) {
+        document.getElementById("sendLog").innerText = "Valitse 2 finaalijoukkuetta!";
+        return false;
+    }
+    
+    return true;
+}
+
+function checkChampionValid() {
+    var formElements = document.getElementById("mestariForm").elements;
+    var count = 0;
+
+    for (var i = 0; i < formElements.length; i++) {
+        if (formElements[i].checked) {
+            count++;
+        }
+    }
+
+    if (count != 1) {
+        document.getElementById("sendLog").innerText = "Valitse mestari!";
+        return false;
+    }
+    
     return true;
 }
