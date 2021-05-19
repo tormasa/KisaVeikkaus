@@ -16,21 +16,27 @@ request.onload = function() {
     }
 
     createLohkot();
+    createTeamSelection("puolivalierat");
 
     // Lisätään toiminnallisuudet painikkeisiin vasta kun on saatu vastaus json-viestiin
     document.getElementById("alkulohkoButton").addEventListener("click", openAlkulohko);
     document.getElementById("backButtonAlkulohko").addEventListener("click", openMainFromGroup);
+    document.getElementById("puolivalieratButton").addEventListener("click", openPuolivaliera);
     document.getElementById("sendButton").addEventListener("click", send);
 }
 
+showOneBlock("mainBlock");
 
+function showOneBlock(block) {
+    document.getElementById("mainBlock").style.display = "none";
+    document.getElementById("alkulohkoBlock").style.display = "none";
+    document.getElementById("puolivalieratBlock").style.display = "none";
 
-document.getElementById("mainBlock").style.display = "block";
-document.getElementById("alkulohkoBlock").style.display = "none";
+    document.getElementById(block).style.display = "block";
+}
 
 function openAlkulohko() {
-    document.getElementById("mainBlock").style.display = "none";
-    document.getElementById("alkulohkoBlock").style.display = "block";
+    showOneBlock("alkulohkoBlock");
     document.getElementById("groupError").innerText = " ";
 }
 
@@ -82,11 +88,36 @@ function openMainFromGroup() {
         }
 
         if (valid) {
-            document.getElementById("mainBlock").style.display = "block";
-            document.getElementById("alkulohkoBlock").style.display = "none";
+            showOneBlock("mainBlock");
         }
     }
     
+}
+
+function openPuolivaliera() {
+    showOneBlock("puolivalieratBlock");
+}
+
+function openMainFromPuolivaliera() {
+    openMainFromTeamSelection("puolivalierat", 8)
+}
+
+function openMainFromTeamSelection(stage, choiceCount) {
+    var formElements = document.getElementById(stage +"Form").elements;
+    var count = 0;
+
+    for (var i = 0; i < formElements.length; i++) {
+        if (formElements[i].checked) {
+            count++;
+        }
+    }
+
+    if (count != choiceCount) {
+        console.log("ei ole kahdeksan");
+    }
+    else {
+        console.log("on kahdeksan");
+    }
 }
 
 function send() {
@@ -169,47 +200,50 @@ function beforeLohko(kirjain) {
     }
 }
 
-function createLohko(kirjain, obj, pair) {
-    const teams = obj['teams'];
+function createTeamSelection(stage) {
+    const teams = teamData['teams'];
+    var blockElement = document.getElementById(stage +"Block");
 
-    var div = document.createElement("div");
-    var lohkoHeader = document.createElement("h3");
-    var lohkoText = document.createTextNode("LOHKO " +kirjain);
+    var form = document.createElement("FORM");
+    form.id = stage +"Form";
+    blockElement.appendChild(form);
 
-    // Otsake
-    lohkoHeader.appendChild(lohkoText);
-    div.appendChild(lohkoHeader);
+    var teamsDiv = document.createElement("div");
+    teamsDiv.className = "team-selection";
+    form.appendChild(teamsDiv);
 
-    // Joukkueet
-    //var t1Button = document
     for (var i = 0; i < teams.length; i++) {
-        if (teams[i].lohko == kirjain) {
-            var newDiv = document.createElement("div");
-            var label = document.createElement("label");
-            var checkBox = document.createElement("INPUT");
-            var span = document.createElement("span");
+        var teamDiv = document.createElement("div");
+        var label = document.createElement("label");
+        var checkBox = document.createElement("INPUT");
+        var span = document.createElement("span");
 
-            span.innerHTML = teams[i].name;
+        span.innerHTML = teams[i].name;
 
-            //button.innerHTML = teams[i].name;
-            checkBox.setAttribute("type", "checkbox");
-            checkBox.setAttribute("name", teams[i].name);
+        checkBox.setAttribute("type", "checkbox");
+        checkBox.setAttribute("name", teams[i].name);
+        checkBox.value = teams[i].teamID;
 
-            //container.className = "container";
-            //checkMark.className = "checkmark";
-            newDiv.id = "ck-button";
-            
-            label.appendChild(checkBox);
-            label.appendChild(span);
-            newDiv.appendChild(label);
-            div.appendChild(newDiv);
+        teamDiv.id = "ck-button";
 
-            checkBox.value = teams[i].teamID;
-        }
+        label.appendChild(checkBox);
+        label.appendChild(span);
+        teamDiv.appendChild(label);
+
+        teamsDiv.appendChild(teamDiv);
     }
-    
-    var parent = (pair) ? document.getElementById("groupPairCol") : document.getElementById("groupPairlessCol");
-    parent.appendChild(div);
+
+    var buttonDiv = document.createElement("div");
+    buttonDiv.className = "team-selection-button-container";
+    form.appendChild(buttonDiv);
+
+    var confirmButton = document.createElement("BUTTON");
+    confirmButton.innerHTML = "VAHVISTA";
+    confirmButton.className = "send-button";
+    confirmButton.type = "button";
+    buttonDiv.appendChild(confirmButton);
+
+    if (stage == "puolivalierat") confirmButton.addEventListener("click", openMainFromPuolivaliera);
 }
 
 function checkNameValid() {

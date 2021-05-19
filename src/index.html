@@ -125,12 +125,35 @@
                 float: left;
                 width: 25%;
             }
+            .team-selection {
+                column-count: 3;
+                padding-left: 10%;
+                padding-right: 10%;
+                min-width: 450px;
+            }
+            .team-selection-button-container {
+                margin: 0 auto;
+                text-align: center;
+                padding-top: 25px;
+            }
+            .team-selection-h2 {
+                font-family: 'Comfortaa', cursive;
+                padding-left: 10%;
+            }
+            .team-selection-h3 {
+                font-family: 'Comfortaa', cursive;
+                padding-left: 10%;
+            }
             #ck-button {
                 margin:4px;
                 background-color:#E57200;
                 border-radius:4px;
                 border:2px solid #D0D0D0;
                 overflow:auto;
+                -webkit-column-break-inside: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                min-width: 150px;
             }
             #ck-button label span {
                 text-align:center;
@@ -248,6 +271,11 @@
 
             <br>
             <div class="send-log-text" id="groupError"></div>
+        </div>
+
+        <div id="puolivalieratBlock">
+            <h2 class="team-selection-h2">Puolivälierät</h2>
+            <h3 class="team-selection-h3">Valitse puolivälieriin etenevät kahdeksan joukkuetta.</h3>
         </div>
         
     <script src="index.js"></script>
