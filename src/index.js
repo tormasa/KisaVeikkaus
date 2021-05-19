@@ -1,5 +1,5 @@
 // Team json
-let requestURL = 'https://api.jsonbin.io/b/60a18b13d576d41d833eb495';
+let requestURL = 'https://api.jsonbin.io/b/60a526c4f350373e7857c427';
 let request = new XMLHttpRequest();
 request.open('GET', requestURL);
 request.responseType = 'json';
@@ -10,6 +10,7 @@ let qualGroupTeams = [];
 
 request.onload = function() {
     teamData = request.response;
+
     // Alkulohkojen luonti kun on ladattu json
     for (var i = 0; i < 6; i++) {
         //createLohko((i+10).toString(36).toUpperCase(), teamData, i % 2 != 0);
@@ -20,6 +21,7 @@ request.onload = function() {
     createTeamSelection("valierat");
     createTeamSelection("finaali");
     createTeamSelection("mestari");
+    createScorers();
 
     // Lisätään toiminnallisuudet painikkeisiin vasta kun on saatu vastaus json-viestiin
     document.getElementById("alkulohkoButton").addEventListener("click", openAlkulohko);
@@ -28,7 +30,10 @@ request.onload = function() {
     document.getElementById("valieratButton").addEventListener("click", openValiera);
     document.getElementById("finaaliButton").addEventListener("click", openFinaali);
     document.getElementById("mestariButton").addEventListener("click", openMestari);
+    document.getElementById("maalintekijatButton").addEventListener("click", openScorers);
     document.getElementById("sendButton").addEventListener("click", send);
+
+    document.addEventListener("click", closeAllSelect);
 }
 
 showOneBlock("mainBlock");
@@ -40,6 +45,7 @@ function showOneBlock(block) {
     document.getElementById("valieratBlock").style.display = "none";
     document.getElementById("finaaliBlock").style.display = "none";
     document.getElementById("mestariBlock").style.display = "none";
+    document.getElementById("maalintekijatBlock").style.display = "none";
 
     document.getElementById(block).style.display = "block";
 
@@ -175,6 +181,10 @@ function openMainFromTeamSelection(stage, choiceCount) {
     else {
         showOneBlock("mainBlock");
     }
+}
+
+function openScorers() {
+    showOneBlock("maalintekijatBlock");
 }
 
 function send() {
@@ -362,6 +372,125 @@ function createTeamSelection(stage) {
     else if (stage == "valierat") confirmButton.addEventListener("click", openMainFromValiera);
     else if (stage == "finaali") confirmButton.addEventListener("click", openMainFromFinaali);
     else if (stage == "mestari") confirmButton.addEventListener("click", openMainFromMestari);
+}
+
+function createScorers() {
+    var teams = teamData['teams'];
+    // Järjestetään joukkueet aakkosjärjestykseen
+    teams.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+
+    // Lisätään joukkueen dropdowniin vaihtoehdoiksi
+    for (var i = 0; i < teams.length; i++) {
+        var newOption = document.createElement("option");
+        newOption.innerHTML = teams[i].name;
+        newOption.value = i + 1;
+
+        var optionParent = document.getElementById("scorerParent");
+        optionParent.appendChild(newOption);
+    }
+
+    /*look for any elements with the class "custom-select":*/
+    var x = document.getElementsByClassName("custom-select");
+    var l = x.length;
+    for (var i = 0; i < l; i++) {
+        selElmnt = x[i].getElementsByTagName("select")[0];
+        var ll = selElmnt.length;
+        /*for each element, create a new DIV that will act as the selected item:*/
+        var a = document.createElement("DIV");
+        a.setAttribute("class", "select-selected");
+        a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+        x[i].appendChild(a);
+        /*for each element, create a new DIV that will contain the option list:*/
+        b = document.createElement("DIV");
+        b.setAttribute("class", "select-items select-hide");
+        for (j = 1; j < ll; j++) {
+            /*for each option in the original select element,
+            create a new DIV that will act as an option item:*/
+            c = document.createElement("DIV");
+            c.innerHTML = selElmnt.options[j].innerHTML;
+
+            c.addEventListener("click", function(e) {
+                //when an item is clicked, update the original select box, and the selected item:
+                var y, i, k, s, h, sl, yl;
+
+                s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                sl = s.length;
+                h = this.parentNode.previousSibling;
+
+                for (i = 0; i < sl; i++) {
+                    if (s.options[i].innerHTML == this.innerHTML) {
+                        s.selectedIndex = i;
+                        h.innerHTML = this.innerHTML;
+                        y = this.parentNode.getElementsByClassName("same-as-selected");
+                        yl = y.length;
+
+                        for (k = 0; k < yl; k++) {
+                            y[k].removeAttribute("class");
+                        }
+
+                        this.setAttribute("class", "same-as-selected");
+
+                        setScorers(this.innerHTML);
+
+                        break;
+                    }
+                }
+
+                h.click();
+            });
+
+            b.appendChild(c);
+        }
+
+        x[i].appendChild(b);
+        a.addEventListener("click", function(e) {
+            /*when the select box is clicked, close any other select boxes,
+            and open/close the current select box:*/
+            e.stopPropagation();
+            closeAllSelect(this);
+            this.nextSibling.classList.toggle("select-hide");
+            this.classList.toggle("select-arrow-active");
+        });
+    }
+}
+
+function closeAllSelect(elmnt) {
+    /*a function that will close all select boxes in the document,
+    except the current select box:*/
+    var x, y, i, xl, yl, arrNo = [];
+    x = document.getElementsByClassName("select-items");
+    y = document.getElementsByClassName("select-selected");
+    xl = x.length;
+    yl = y.length;
+    for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+            arrNo.push(i)
+        } else {
+            y[i].classList.remove("select-arrow-active");
+        }
+    }
+    for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+            x[i].classList.add("select-hide");
+        }
+    }
+}
+
+function setScorers(country) {
+    var teams = teamData['teams'];
+    var players = [];
+                        
+    for (var h = 0; h < teams.length; h++) {
+        if (teams[h].name == country) {
+            players = teams[h].players;
+            
+            break;
+        }
+    }
+
+    for (var p = 0; p < players.length; p++) {
+        console.log(players[p].name);
+    }
 }
 
 function checkNameValid() {
