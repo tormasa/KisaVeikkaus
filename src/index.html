@@ -45,6 +45,7 @@
                 grid-column-end: 4;
                 padding-top: 10px;
                 padding-bottom: 10px;
+                position:relative;
             }
             .grid-item-send-button {
                 text-align: center;
@@ -63,6 +64,7 @@
                 width: 50%;
                 font-family: 'Comfortaa', cursive;
                 font-size: 20px;
+                margin-right: 20px;
             }
             .arvausButton:hover {
                 background-color: #fd9e3f;
@@ -143,6 +145,7 @@
             .team-selection-h3 {
                 font-family: 'Comfortaa', cursive;
                 padding-left: 10%;
+                padding-right: 10%;
             }
             #ck-button {
                 margin:4px;
@@ -162,10 +165,13 @@
                 font-size: 20px;
                 padding-top: 10px;
                 padding-bottom: 10px;
+                -webkit-user-select: none; /* Safari */        
+                -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* IE10+/Edge */
+                user-select: none; /* Standard */
             }
             #ck-button label input {
-                position:absolute;
-                top: -20px;
+                display: none;
             }
             #ck-button input:checked + span {
                 background-color:#78BE21;
@@ -224,6 +230,37 @@
                 -ms-transform: rotate(45deg);
                 transform: rotate(45deg);
             }
+            .checkmark-confirm {
+                display:inline-block;
+                width: 44px;
+                height: 44px;
+                border-radius:50%;
+                background: #029728;
+                -ms-transform: rotate(45deg); /* IE 9 */
+                -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+                transform: rotate(45deg);
+                position:absolute; 
+                top:16px;
+            }
+            .checkmark-confirm:before{
+                content:"";
+                position:absolute;
+                width:6px;
+                height:18px;
+                background-color:#fff;
+                left:22px;
+                top:12px;
+            }
+            .checkmark-confirm:after{
+                content:"";
+                position: absolute;
+                width:6px;
+                height:6px;
+                background-color:#fff;
+                left:16px;
+                top:24px;
+            }
+
         </style>
     </head>
     <body>
@@ -237,17 +274,35 @@
                 <div class="grid-item-text">Tunnus: </div>
                 <div class="grid-item-input"><input type="text" id="ryhmaTunnus" value=""></div>
 
-                <div class="grid-item-button"><button class="arvausButton" type="button" id="alkulohkoButton">Alkulohkot</button></div>
+                <div class="grid-item-button">
+                    <button class="arvausButton" type="button" id="alkulohkoButton">Alkulohkot</button>
+                    <span class="checkmark-confirm"></span>
+                </div>
 
-                <div class="grid-item-button"><button class="arvausButton" type="button" id="puolivalieratButton">Puolivälierät</button></div>
+                <div class="grid-item-button">
+                    <button class="arvausButton" type="button" id="puolivalieratButton">Puolivälierät</button>
+                    <span class="checkmark-confirm"></span>
+                </div>
 
-                <div class="grid-item-button"><button class="arvausButton" type="button" id="valieratButton">Välierät</button></div>
+                <div class="grid-item-button">
+                    <button class="arvausButton" type="button" id="valieratButton">Välierät</button>
+                    <span class="checkmark-confirm"></span>
+                </div>
 
-                <div class="grid-item-button"><button class="arvausButton" type="button" id="finaaliButton">Finaali</button></div>
+                <div class="grid-item-button">
+                    <button class="arvausButton" type="button" id="finaaliButton">Finaali</button>
+                    <span class="checkmark-confirm"></span>
+                </div>
 
-                <div class="grid-item-button"><button class="arvausButton" type="button" id="mestariButton">Mestari</button></div>
+                <div class="grid-item-button">
+                    <button class="arvausButton" type="button" id="mestariButton">Mestari</button>
+                    <span class="checkmark-confirm"></span>
+                </div>
 
-                <div class="grid-item-button"><button class="arvausButton" type="button" id="maalintekijatButton">Maalintekijät</button></div>
+                <div class="grid-item-button">
+                    <button class="arvausButton" type="button" id="maalintekijatButton">Maalintekijät</button>
+                    <span class="checkmark-confirm"></span>
+                </div>
 
                 <div class="grid-item-text"></div>
 
@@ -258,6 +313,7 @@
         </div>
 
         <div id="alkulohkoBlock">
+            <h3 class="team-selection-h3">Valitse kahdesta lohkosta kaksi puolivälieriin selviytyvää joukkuetta ja neljästä lohkosta kolme joukkuetta.</h3>
             <form id="groupForm">
                 <div class="alkulohko-teams" id="alkulohkoTeams">
 
@@ -276,6 +332,21 @@
         <div id="puolivalieratBlock">
             <h2 class="team-selection-h2">Puolivälierät</h2>
             <h3 class="team-selection-h3">Valitse puolivälieriin etenevät kahdeksan joukkuetta.</h3>
+        </div>
+
+        <div id="valieratBlock">
+            <h2 class="team-selection-h2">Välierät</h2>
+            <h3 class="team-selection-h3">Valitse välieriin etenevät neljä joukkuetta.</h3>
+        </div>
+
+        <div id="finaaliBlock">
+            <h2 class="team-selection-h2">Finaali</h2>
+            <h3 class="team-selection-h3">Valitse finaaliin etenevät kaksi joukkuetta.</h3>
+        </div>
+
+        <div id="mestariBlock">
+            <h2 class="team-selection-h2">Euroopan mestari</h2>
+            <h3 class="team-selection-h3">Valitse Euroopan mestaruuden voittava joukkue.</h3>
         </div>
         
     <script src="index.js"></script>

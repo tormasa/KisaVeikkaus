@@ -17,11 +17,17 @@ request.onload = function() {
 
     createLohkot();
     createTeamSelection("puolivalierat");
+    createTeamSelection("valierat");
+    createTeamSelection("finaali");
+    createTeamSelection("mestari");
 
     // Lisätään toiminnallisuudet painikkeisiin vasta kun on saatu vastaus json-viestiin
     document.getElementById("alkulohkoButton").addEventListener("click", openAlkulohko);
     document.getElementById("backButtonAlkulohko").addEventListener("click", openMainFromGroup);
     document.getElementById("puolivalieratButton").addEventListener("click", openPuolivaliera);
+    document.getElementById("valieratButton").addEventListener("click", openValiera);
+    document.getElementById("finaaliButton").addEventListener("click", openFinaali);
+    document.getElementById("mestariButton").addEventListener("click", openMestari);
     document.getElementById("sendButton").addEventListener("click", send);
 }
 
@@ -31,6 +37,9 @@ function showOneBlock(block) {
     document.getElementById("mainBlock").style.display = "none";
     document.getElementById("alkulohkoBlock").style.display = "none";
     document.getElementById("puolivalieratBlock").style.display = "none";
+    document.getElementById("valieratBlock").style.display = "none";
+    document.getElementById("finaaliBlock").style.display = "none";
+    document.getElementById("mestariBlock").style.display = "none";
 
     document.getElementById(block).style.display = "block";
 }
@@ -98,8 +107,32 @@ function openPuolivaliera() {
     showOneBlock("puolivalieratBlock");
 }
 
+function openValiera() {
+    showOneBlock("valieratBlock");
+}
+
+function openFinaali() {
+    showOneBlock("finaaliBlock");
+}
+
+function openMestari() {
+    showOneBlock("mestariBlock");
+}
+
 function openMainFromPuolivaliera() {
-    openMainFromTeamSelection("puolivalierat", 8)
+    openMainFromTeamSelection("puolivalierat", 8);
+}
+
+function openMainFromValiera() {
+    openMainFromTeamSelection("valierat", 4);
+}
+
+function openMainFromFinaali() {
+    openMainFromTeamSelection("finaali", 2);
+}
+
+function openMainFromMestari() {
+    openMainFromTeamSelection("mestari", 1);
 }
 
 function openMainFromTeamSelection(stage, choiceCount) {
@@ -116,7 +149,7 @@ function openMainFromTeamSelection(stage, choiceCount) {
         console.log("ei ole kahdeksan");
     }
     else {
-        console.log("on kahdeksan");
+        showOneBlock("mainBlock");
     }
 }
 
@@ -244,6 +277,9 @@ function createTeamSelection(stage) {
     buttonDiv.appendChild(confirmButton);
 
     if (stage == "puolivalierat") confirmButton.addEventListener("click", openMainFromPuolivaliera);
+    else if (stage == "valierat") confirmButton.addEventListener("click", openMainFromValiera);
+    else if (stage == "finaali") confirmButton.addEventListener("click", openMainFromFinaali);
+    else if (stage == "mestari") confirmButton.addEventListener("click", openMainFromMestari);
 }
 
 function checkNameValid() {
