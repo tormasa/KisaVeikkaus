@@ -4,3 +4,4 @@ node_modules
 teams.json
 .vscode
 .parcel-cache
+/index.*

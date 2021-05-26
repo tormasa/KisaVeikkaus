@@ -1,5 +1,5 @@
 // Team json
-let requestURL = 'https://api.jsonbin.io/b/60a526c4f350373e7857c427';
+let requestURL = 'https://api.jsonbin.io/b/60a5fd9c4e1de86b45d25e16/2';
 let request = new XMLHttpRequest();
 request.open('GET', requestURL);
 request.responseType = 'json';
@@ -33,6 +33,48 @@ request.onload = function() {
     document.getElementById("maalintekijatButton").addEventListener("click", openScorers);
     document.getElementById("sendButton").addEventListener("click", send);
 
+    // Tehdään niin, että kun klikataan valittuja maalintekijöitä, niin poistetaan maalintekijä valinnoista
+    // ja muutetaan myös pelaajapainikkeita maakohtaisissa listoissa
+    var scorerSelect = document.getElementsByClassName("selected-scorers-button-unselected");
+
+    for (var i = 0; i < scorerSelect.length; i++) {
+        scorerSelect[i].addEventListener("click", function(e) {
+            if (this.className == "selected-scorers-button") {
+                var playerButtons = document.getElementsByClassName("scorer-button-selected");
+
+                for (var p = 0; p < playerButtons.length; p++) {
+                    if (playerButtons[p].innerHTML == this.innerHTML) {
+                        playerButtons[p].className = "scorer-button";
+                        break;
+                    }
+                }
+
+                this.innerHTML = "Ei valintaa";
+                this.className = "selected-scorers-button-unselected";
+            }
+        });
+    }
+
+    // Maalintekijöiden vahvistus-button
+    document.getElementById("confirmGoalScorers").addEventListener("click", function(e) {
+        var unselected = document.getElementsByClassName("selected-scorers-button-unselected");
+        
+        if (unselected.length == 0) {
+            // Tarkistetaan ettei ole valittu samannimisiä (eli todennäköisesti samaa pelaajaa) useaan kertaan
+            for (var i = 0; i < unselected.length; i++) {
+                for (var j = 0; j < unselected.length; j++) {
+                    if (j != i) {
+                        if (unselected[j].innerHTML == unselected[i].innerHTML) return 0;
+                    }
+                }
+            }
+
+            showOneBlock("mainBlock");
+            confirmCheck(true, "maalintekijat");
+        }
+    });
+
+    // Suljetaan kaikki dropdown-valikot kun klikataan jonnekin
     document.addEventListener("click", closeAllSelect);
 }
 
@@ -175,10 +217,7 @@ function openMainFromTeamSelection(stage, choiceCount) {
         }
     }
 
-    if (count != choiceCount) {
-        console.log("ei ole kahdeksan");
-    }
-    else {
+    if (count == choiceCount) {
         showOneBlock("mainBlock");
     }
 }
@@ -193,13 +232,15 @@ function send() {
     var sendable = checkNameValid() && checkGroupIDValid() && checkGroupQualValid() && 
     checkQuarterFinalValid() && checkSemiFinalValid() && checkFinalValid() && checkChampionValid();
 
+    sendable = true;
+
     if (sendable) {
         var item = {};
         item["name"] = document.getElementById("veikkaajanNimi").value;
         item["group"] = document.getElementById("ryhmaTunnus").value;
 
         var grQual = [];
-        var teams = teamData['teams'];
+        //var teams = teamData['teams'];
 
         for (var i = 0; i < qualGroupTeams.length; i++) {
             var groupItem = {};
@@ -267,6 +308,11 @@ function send() {
 
 
         console.log(JSON.stringify(item));
+
+        var request = new XMLHttpRequest();
+        request.open("POST", "https://emkisaveikkaus.com/lahetys.php", true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.send(JSON.stringify(item));
     }
 }
 
@@ -363,7 +409,7 @@ function createTeamSelection(stage) {
     form.appendChild(buttonDiv);
 
     var confirmButton = document.createElement("BUTTON");
-    confirmButton.innerHTML = "VAHVISTA";
+    confirmButton.innerHTML = "Hyväksy";
     confirmButton.className = "send-button";
     confirmButton.type = "button";
     buttonDiv.appendChild(confirmButton);
@@ -452,24 +498,68 @@ function createScorers() {
             this.classList.toggle("select-arrow-active");
         });
     }
+    
+    // Luodaa pelaajabuttonit
+    var scorersBlock = document.getElementById("maalintekijatBlock");
+
+    for (var t = 0; t < teams.length; t++) {
+        var players = teams[t].players;
+        var teamDiv = document.createElement("div");
+        teamDiv.id = "scorers" +teams[t].name;
+        teamDiv.className = "unselected-scorer-country";
+        scorersBlock.appendChild(teamDiv);
+
+        for (var p = 0; p < players.length; p++) {
+            var playerButton = document.createElement("button");
+            playerButton.innerHTML = players[p].firstName +" " +players[p].lastName;
+            playerButton.className = "scorer-button";
+            teamDiv.appendChild(playerButton);
+
+            playerButton.addEventListener("click", function(e) {
+                // Jos klikattua pelaajaa ei ole vielä valittu
+                if (this.className == "scorer-button") {
+                    var selectedButtons = document.getElementsByClassName("selected-scorers-button-unselected");
+
+                    if (selectedButtons.length > 0) {
+                        selectedButtons[0].innerHTML = this.innerHTML;
+                        selectedButtons[0].className = "selected-scorers-button";
+                        this.className = "scorer-button-selected";
+                    }
+                }
+                // Klikattu pelaaja on jo valittu
+                else {
+                    var selectedButtons = document.getElementsByClassName("selected-scorers-button");
+
+                    for (var i = 0; i < selectedButtons.length; i++) {
+                        if (selectedButtons[i].innerHTML == this.innerHTML) {
+                            selectedButtons[i].innerHTML = "Ei valintaa";
+                            selectedButtons[i].className = "selected-scorers-button-unselected";
+                            break;
+                        }
+                    }
+
+                    this.className = "scorer-button";
+                }
+            });
+        }
+    }
 }
 
 function closeAllSelect(elmnt) {
     /*a function that will close all select boxes in the document,
     except the current select box:*/
-    var x, y, i, xl, yl, arrNo = [];
-    x = document.getElementsByClassName("select-items");
-    y = document.getElementsByClassName("select-selected");
-    xl = x.length;
-    yl = y.length;
-    for (i = 0; i < yl; i++) {
+    var arrNo = [];
+    var x = document.getElementsByClassName("select-items");
+    var y = document.getElementsByClassName("select-selected");
+    
+    for (var i = 0; i < y.length; i++) {
         if (elmnt == y[i]) {
             arrNo.push(i)
         } else {
             y[i].classList.remove("select-arrow-active");
         }
     }
-    for (i = 0; i < xl; i++) {
+    for (var i = 0; i < x.length; i++) {
         if (arrNo.indexOf(i)) {
             x[i].classList.add("select-hide");
         }
@@ -477,20 +567,14 @@ function closeAllSelect(elmnt) {
 }
 
 function setScorers(country) {
-    var teams = teamData['teams'];
-    var players = [];
-                        
-    for (var h = 0; h < teams.length; h++) {
-        if (teams[h].name == country) {
-            players = teams[h].players;
-            
-            break;
-        }
+    var oldSelected = document.getElementsByClassName("selected-scorer-country");
+
+    for (var i = 0; i < oldSelected.length; i++) {
+        oldSelected[i].className = "unselected-scorer-country";
     }
 
-    for (var p = 0; p < players.length; p++) {
-        console.log(players[p].name);
-    }
+    var teamDiv = document.getElementById("scorers" +country);
+    teamDiv.className = "selected-scorer-country";
 }
 
 function checkNameValid() {

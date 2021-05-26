@@ -264,12 +264,15 @@
                 position: relative;
                 font-family: Arial;
                 text-align: center;
+                margin-left: 10%;
+                margin-top: 15px;
+                width: 250px;
             }
             .custom-select select {
                 display: none;
             }
             .select-selected {
-                background-color: #E57200;
+                background-color: #B884CB;
             }
             /*style the arrow inside the select element:*/
             .select-selected:after {
@@ -300,7 +303,7 @@
             /*style items (options):*/
             .select-items {
                 position: absolute;
-                background-color: #E57200;
+                background-color: #B884CB;
                 top: 100%;
                 left: 0;
                 right: 0;
@@ -312,6 +315,91 @@
             }
             .select-items div:hover, .same-as-selected {
                 background-color: rgba(0, 0, 0, 0.1);
+            }
+            .selected-scorer-country {
+                display: grid;
+                grid-template-columns: auto auto auto auto;
+                grid-gap: 3px;
+                padding-top: 30px;
+                padding-left: 10%;
+                padding-right: 10%;
+            }
+            .unselected-scorer-country {
+                display: none;
+            }
+            .scorer-button {
+                background-color: #E57200;
+                border: 2px solid black;
+                color: black;
+                padding-top: 15px;
+                padding-bottom: 15px;
+                border-radius: 12px;
+                transition-duration: 0.4s;
+                font-family: 'Comfortaa', cursive;
+                font-size: 12px;
+                width: 100%;
+            }
+            .scorer-button:hover {
+                background-color: #fd9e3f;
+            }
+            .scorer-button-selected {
+                background-color: #78BE21;
+                border: 2px solid black;
+                color: rgb(255, 255, 255);
+                padding-top: 15px;
+                padding-bottom: 15px;
+                border-radius: 12px;
+                transition-duration: 0.4s;
+                font-family: 'Comfortaa', cursive;
+                font-size: 12px;
+                width: 100%;
+            }
+            .scorer-button-selected:hover {
+                background-color: #9ef139;
+            }
+            .selected-scorers-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-gap: 3px;
+                padding-left: 10%;
+                padding-right: 10%;
+                padding-bottom: 20px;
+            }
+            .select-scorers-h2 {
+                grid-column-start: 1;
+                grid-column-end: 4;
+                font-family: 'Comfortaa', cursive;
+            }
+            .selected-scorers-button {
+                background-color: #78BE21;
+                border: 2px solid black;
+                color: rgb(255, 255, 255);
+                padding-top: 15px;
+                padding-bottom: 15px;
+                border-radius: 12px;
+                transition-duration: 0.4s;
+                font-family: 'Comfortaa', cursive;
+                font-size: 12px;
+                width: 100%;
+            }
+            .selected-scorers-button:hover {
+                background-color: #9ef139;
+            }
+            .selected-scorers-button-unselected {
+                background-color: #D0D3D4;
+                border: 2px solid black;
+                color: black;
+                padding-top: 15px;
+                padding-bottom: 15px;
+                border-radius: 12px;
+                transition-duration: 0.4s;
+                font-family: 'Comfortaa', cursive;
+                font-size: 12px;
+                width: 100%;
+            }
+            .confirm-scorers-container {
+                text-align: center;
+                margin: 10px;
             }
 
         </style>
@@ -403,7 +491,19 @@
         </div>
 
         <div id="maalintekijatBlock">
-            <div class="custom-select" style="width:200px; text-align: center;">
+            <div class="selected-scorers-grid">
+                <h2 class="select-scorers-h2">Valitut maalintekijät</h2>
+                <button class="selected-scorers-button-unselected" type="button" id="scorerValinta">Ei valintaa</button>
+                <button class="selected-scorers-button-unselected" type="button" id="scorerValinta">Ei valintaa</button>
+                <button class="selected-scorers-button-unselected" type="button" id="scorerValinta">Ei valintaa</button>
+                <button class="selected-scorers-button-unselected" type="button" id="scorerValinta">Ei valintaa</button>
+                <button class="selected-scorers-button-unselected" type="button" id="scorerValinta">Ei valintaa</button>
+                <button class="selected-scorers-button-unselected" type="button" id="scorerValinta">Ei valintaa</button>
+            </div>
+            <div class="confirm-scorers-container">
+                <button type="button" class="send-button" id="confirmGoalScorers">Hyväksy</button>
+            </div>
+            <div class="custom-select">
                 <select id="scorerParent">
                   <option value="0">Valitse maa:</option>
                 </select>
