@@ -1,15 +1,32 @@
+// Data from MySQL
+let mysqlRequestURL = 'https://www.emkisaveikkaus.com/getData.php';
+let mysqlRequest = new XMLHttpRequest();
+mysqlRequest.open('GET', mysqlRequestURL);
+mysqlRequest.responseType = 'json';
+mysqlRequest.send();
+
+/*
+mysqlRequest.onload = function() {
+    var tempData = mysqlRequest.response;
+
+    console.log(tempData);
+};
+*/
+
 // Team json
+/*
 let requestURL = 'https://api.jsonbin.io/b/60a5fd9c4e1de86b45d25e16/2';
 let request = new XMLHttpRequest();
 request.open('GET', requestURL);
 request.responseType = 'json';
 request.send();
+*/
 
 let teamData;
 let qualGroupTeams = [];
 
-request.onload = function() {
-    teamData = request.response;
+mysqlRequest.onload = function() {
+    teamData = mysqlRequest.response;
 
     // Alkulohkojen luonti kun on ladattu json
     for (var i = 0; i < 6; i++) {
@@ -330,17 +347,17 @@ function createLohkot() {
         lohkoDivs.push(lohkoHeaderDiv);
     }
 
-    for (var i = 0; i < teams.length; i++) {
+    for (var key in teams) {
         var teamDiv = document.createElement("div");
         var label = document.createElement("label");
         var checkBox = document.createElement("INPUT");
         var span = document.createElement("span");
 
-        span.innerHTML = teams[i].name;
+        span.innerHTML = teams[key]["name"];
 
         checkBox.setAttribute("type", "checkbox");
-        checkBox.setAttribute("name", teams[i].name);
-        checkBox.value = teams[i].teamID;
+        checkBox.setAttribute("name", teams[key]["name"]);
+        checkBox.value = teams[key]["teamID"];
 
         teamDiv.id = "ck-button";
 
@@ -348,7 +365,7 @@ function createLohkot() {
         label.appendChild(span);
         teamDiv.appendChild(label);
 
-        var lohkoInt = beforeLohko(teams[i].lohko);
+        var lohkoInt = beforeLohko(teams[key]["lohko"]);
         if (lohkoInt < 0) blockDiv.appendChild(teamDiv);
         else blockDiv.insertBefore(teamDiv, lohkoDivs[lohkoInt]);
     }
@@ -383,17 +400,17 @@ function createTeamSelection(stage) {
     teamsDiv.className = "team-selection";
     form.appendChild(teamsDiv);
 
-    for (var i = 0; i < teams.length; i++) {
+    for (var key in teams) {
         var teamDiv = document.createElement("div");
         var label = document.createElement("label");
         var checkBox = document.createElement("INPUT");
         var span = document.createElement("span");
 
-        span.innerHTML = teams[i].name;
+        span.innerHTML = teams[key]["name"];
 
         checkBox.setAttribute("type", "checkbox");
-        checkBox.setAttribute("name", teams[i].name);
-        checkBox.value = teams[i].teamID;
+        checkBox.setAttribute("name", teams[key]["name"]);
+        checkBox.value = teams[key]["teamID"];
 
         teamDiv.id = "ck-button";
 
@@ -422,17 +439,20 @@ function createTeamSelection(stage) {
 
 function createScorers() {
     var teams = teamData['teams'];
+
     // Järjestetään joukkueet aakkosjärjestykseen
-    teams.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+    //teams.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
 
     // Lisätään joukkueen dropdowniin vaihtoehdoiksi
-    for (var i = 0; i < teams.length; i++) {
+    var i = 1;
+    for (var key in teams) {
         var newOption = document.createElement("option");
-        newOption.innerHTML = teams[i].name;
-        newOption.value = i + 1;
+        newOption.innerHTML = teams[key]["name"];
+        newOption.value = i;
 
         var optionParent = document.getElementById("scorerParent");
         optionParent.appendChild(newOption);
+        i++;
     }
 
     /*look for any elements with the class "custom-select":*/
@@ -502,16 +522,16 @@ function createScorers() {
     // Luodaa pelaajabuttonit
     var scorersBlock = document.getElementById("maalintekijatBlock");
 
-    for (var t = 0; t < teams.length; t++) {
-        var players = teams[t].players;
+    for (var key in teams) {
+        var players = teams[key]["players"];
         var teamDiv = document.createElement("div");
-        teamDiv.id = "scorers" +teams[t].name;
+        teamDiv.id = "scorers" +teams[key]["name"];
         teamDiv.className = "unselected-scorer-country";
         scorersBlock.appendChild(teamDiv);
 
-        for (var p = 0; p < players.length; p++) {
+        for (var pKey in players) {
             var playerButton = document.createElement("button");
-            playerButton.innerHTML = players[p].firstName +" " +players[p].lastName;
+            playerButton.innerHTML = players[pKey]["firstName"] +" " +players[pKey]["lastName"];
             playerButton.className = "scorer-button";
             teamDiv.appendChild(playerButton);
 
