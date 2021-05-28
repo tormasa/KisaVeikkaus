@@ -5,14 +5,6 @@ mysqlRequest.open('GET', mysqlRequestURL);
 mysqlRequest.responseType = 'json';
 mysqlRequest.send();
 
-/*
-mysqlRequest.onload = function() {
-    var tempData = mysqlRequest.response;
-
-    console.log(tempData);
-};
-*/
-
 // Team json
 /*
 let requestURL = 'https://api.jsonbin.io/b/60a5fd9c4e1de86b45d25e16/2';
@@ -48,6 +40,7 @@ mysqlRequest.onload = function() {
     document.getElementById("finaaliButton").addEventListener("click", openFinaali);
     document.getElementById("mestariButton").addEventListener("click", openMestari);
     document.getElementById("maalintekijatButton").addEventListener("click", openScorers);
+    document.getElementById("pukkiMaalitButton").addEventListener("click", openPukkiMaalit);
     document.getElementById("sendButton").addEventListener("click", send);
 
     // Tehdään niin, että kun klikataan valittuja maalintekijöitä, niin poistetaan maalintekijä valinnoista
@@ -86,18 +79,45 @@ mysqlRequest.onload = function() {
                 }
             }
 
-            showOneBlock("mainBlock");
+            showOneBlock("mainBlock", false);
             confirmCheck(true, "maalintekijat");
         }
     });
 
+    // Pukin maalien slider
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("pukkiMaalitTeksti");
+    output.innerHTML = slider.value;
+
+    slider.oninput = function() {
+        output.innerHTML = this.value;
+    }
+
+    // Pukin maalien vahvistus-button
+    document.getElementById("confirmPukkiMaalit").addEventListener("click", function(e) {
+        showOneBlock("mainBlock", false);
+        confirmCheck(true, "pukkiMaalit");
+    });
+
     // Suljetaan kaikki dropdown-valikot kun klikataan jonnekin
     document.addEventListener("click", closeAllSelect);
+
+    // Back-buttonin käyttö ja historian hallinta
+    window.addEventListener('popstate', (event) => {
+        console.log(JSON.stringify(event.state));
+
+        if (event.state != null && event.state.block != null) {
+            console.log("pop! state: " +event.state.block);
+            showOneBlock(event.state.block, true);
+        }
+    });
 }
 
-showOneBlock("mainBlock");
+showOneBlock("mainBlock", false);
 
-function showOneBlock(block) {
+function showOneBlock(block, backButton) {
+    if (!backButton) history.pushState({ block : block }, "", "");
+
     document.getElementById("mainBlock").style.display = "none";
     document.getElementById("alkulohkoBlock").style.display = "none";
     document.getElementById("puolivalieratBlock").style.display = "none";
@@ -105,16 +125,13 @@ function showOneBlock(block) {
     document.getElementById("finaaliBlock").style.display = "none";
     document.getElementById("mestariBlock").style.display = "none";
     document.getElementById("maalintekijatBlock").style.display = "none";
+    document.getElementById("pukkiMaalitBlock").style.display = "none";
 
     document.getElementById(block).style.display = "block";
-
-    if (block == "mainBlock") {
-        document.getElementById("sendLog").innerText = "";
-    }
 }
 
 function openAlkulohko() {
-    showOneBlock("alkulohkoBlock");
+    showOneBlock("alkulohkoBlock", false);
     document.getElementById("groupError").innerText = " ";
 }
 
@@ -166,7 +183,7 @@ function openMainFromGroup() {
         }
 
         if (valid) {
-            showOneBlock("mainBlock");
+            showOneBlock("mainBlock", false);
             confirmCheck(true, "alkulohko");
         }
     }
@@ -185,19 +202,19 @@ function confirmCheck(value, prefix) {
 }
 
 function openPuolivaliera() {
-    showOneBlock("puolivalieratBlock");
+    showOneBlock("puolivalieratBlock", false);
 }
 
 function openValiera() {
-    showOneBlock("valieratBlock");
+    showOneBlock("valieratBlock", false);
 }
 
 function openFinaali() {
-    showOneBlock("finaaliBlock");
+    showOneBlock("finaaliBlock", false);
 }
 
 function openMestari() {
-    showOneBlock("mestariBlock");
+    showOneBlock("mestariBlock", false);
 }
 
 function openMainFromPuolivaliera() {
@@ -240,7 +257,11 @@ function openMainFromTeamSelection(stage, choiceCount) {
 }
 
 function openScorers() {
-    showOneBlock("maalintekijatBlock");
+    showOneBlock("maalintekijatBlock", false);
+}
+
+function openPukkiMaalit() {
+    showOneBlock("pukkiMaalitBlock", false);
 }
 
 function send() {

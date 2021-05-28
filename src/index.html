@@ -17,6 +17,9 @@
                 color: #F2A900;
                 text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;;
             }
+            h3 {
+                font-family: 'Comfortaa', cursive;
+            }
             .grid-container {
                 display: grid;
                 grid-template-columns: auto auto auto auto;
@@ -401,6 +404,39 @@
                 text-align: center;
                 margin: 10px;
             }
+            .slidecontainer {
+                width: 100%;
+            }
+            .slider {
+                -webkit-appearance: none;
+                width: 50%;
+                height: 20px;
+                border-radius: 5px;
+                background: #00C1D4;
+                outline: none;
+                opacity: 0.7;
+                -webkit-transition: .2s;
+                transition: opacity .2s;
+            }
+            .slider:hover {
+                opacity: 1;
+            }
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #E57200;
+                cursor: pointer;
+            }
+            .slider::-moz-range-thumb {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #E57200;
+                cursor: pointer;
+            }
 
         </style>
     </head>
@@ -443,6 +479,11 @@
                 <div class="grid-item-button">
                     <button class="arvausButton" type="button" id="maalintekijatButton">Maalintekijät</button>
                     <div id="maalintekijatCheckConfirm" style="display:none"><span class="checkmark-confirm"></span></div>
+                </div>
+
+                <div class="grid-item-button">
+                    <button class="arvausButton" type="button" id="pukkiMaalitButton">Pukin maalit</button>
+                    <div id="pukkiMaalitCheckConfirm" style="display:none"><span class="checkmark-confirm"></span></div>
                 </div>
 
                 <div class="grid-item-text"></div>
@@ -507,6 +548,18 @@
                 <select id="scorerParent">
                   <option value="0">Valitse maa:</option>
                 </select>
+            </div>
+        </div>
+
+        <div id="pukkiMaalitBlock">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h3>Kuinka monta maalia Teemu Pukki tekee EM-kisoissa?</h3>
+                <h3 style="font-size: 30px" id="pukkiMaalitTeksti"></h3>
+                <input type="range" min="0" max="15" value="0" class="slider" id="myRange">
+            </div>
+            <div class="confirm-scorers-container">
+                
+                <button type="button" class="send-button" id="confirmPukkiMaalit">Hyväksy</button>
             </div>
         </div>
         
